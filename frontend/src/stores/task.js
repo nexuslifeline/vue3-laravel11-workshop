@@ -13,7 +13,7 @@ export const useTaskStore = defineStore('taskStore', () => {
     loading.value = true
     try {
       const response = await api.get('/tasks')
-      tasks.value = response.data.data // assumes Laravel API resource format
+      tasks.value = response.data.data
     } catch (err) {
       error.value = err.message
     } finally {
@@ -36,7 +36,9 @@ export const useTaskStore = defineStore('taskStore', () => {
     try {
       const task = tasks.value.find((t) => t.id === id)
       if (task) {
-        const response = await api.patch(`/tasks/${id}`, { completed: !task.completed })
+        const response = await api.patch(`/tasks/${id}`, {
+          status: task.status === 'completed' ? 'pending' : 'completed',
+        })
         task.completed = response.data.data.completed
       }
     } catch (err) {
