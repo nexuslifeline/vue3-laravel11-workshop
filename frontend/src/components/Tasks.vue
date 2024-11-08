@@ -72,7 +72,3 @@ const addNewTask = () => {
   }
 }
 </script>
-
-<style scoped>
-/* Add additional custom styling if needed */
-</style>

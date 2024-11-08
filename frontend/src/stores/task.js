@@ -1,10 +1,9 @@
 import { defineStore } from 'pinia'
-import { ref } from 'vue'
-
+import { ref, reactive } from 'vue'
 import api from '@/api/apiClient'
 
 export const useTaskStore = defineStore('taskStore', () => {
-  const tasks = ref([])
+  const tasks = reactive([])
   const loading = ref(false)
   const error = ref(null)
 
@@ -13,7 +12,8 @@ export const useTaskStore = defineStore('taskStore', () => {
     loading.value = true
     try {
       const response = await api.get('/tasks')
-      tasks.value = response.data.data
+      tasks.length = 0 // Clear the array while keeping reactivity
+      tasks.push(...response.data.data) // Add new items to the reactive array
     } catch (err) {
       error.value = err.message
     } finally {
@@ -25,21 +25,20 @@ export const useTaskStore = defineStore('taskStore', () => {
   const addTask = async (task) => {
     try {
       const response = await api.post('/tasks', task)
-      tasks.value.push(response.data.data) // assumes Laravel API resource format
+      tasks.push(response.data.data) // Adds new task to reactive array
     } catch (err) {
       error.value = err.message
     }
   }
 
-  // Update task status via API
+  // Toggle task status via API
   const toggleTask = async (id) => {
     try {
-      const task = tasks.value.find((t) => t.id === id)
+      const task = tasks.find((t) => t.id === id)
       if (task) {
-        const response = await api.patch(`/tasks/${id}`, {
-          status: task.status === 'completed' ? 'pending' : 'completed',
-        })
-        task.completed = response.data.data.completed
+        const newStatus = task.status === 'completed' ? 'pending' : 'completed'
+        await api.patch(`/tasks/${id}`, { status: newStatus })
+        task.status = newStatus // Update status directly in reactive array
       }
     } catch (err) {
       error.value = err.message
@@ -50,9 +49,9 @@ export const useTaskStore = defineStore('taskStore', () => {
   const updateTask = async (id, updatedTask) => {
     try {
       const response = await api.patch(`/tasks/${id}`, updatedTask)
-      const taskIndex = tasks.value.findIndex((t) => t.id === id)
+      const taskIndex = tasks.findIndex((t) => t.id === id)
       if (taskIndex !== -1) {
-        tasks.value[taskIndex] = response.data.data
+        tasks.splice(taskIndex, 1, response.data.data) // Replace the updated task in place
       }
     } catch (err) {
       error.value = err.message
@@ -63,7 +62,10 @@ export const useTaskStore = defineStore('taskStore', () => {
   const deleteTask = async (id) => {
     try {
       await api.delete(`/tasks/${id}`)
-      tasks.value = tasks.value.filter((t) => t.id !== id)
+      const taskIndex = tasks.findIndex((t) => t.id === id)
+      if (taskIndex !== -1) {
+        tasks.splice(taskIndex, 1) // Remove the task in place
+      }
     } catch (err) {
       error.value = err.message
     }
