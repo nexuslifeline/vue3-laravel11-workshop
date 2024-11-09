@@ -1,9 +1,11 @@
 <script setup>
-import Tasks from './components/Tasks.vue'
+import TodoManager from '@/components/TodoManager.vue'
 </script>
 
 <template>
-  <main>
-    <Tasks />
+  <main
+    class="w-screen h-screen flex items-center justify-center bg-gradient-to-r from-pink-500 via-purple-500 to-blue-500"
+  >
+    <TodoManager />
   </main>
 </template>
