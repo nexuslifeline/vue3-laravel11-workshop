@@ -27,9 +27,7 @@ watch(localTask, (newValue) => {
 })
 
 const handleAddTask = () => {
-  if (localTask.value.trim()) {
-    emit('addTask')
-    localTask.value = ''
-  }
+  emit('addTask')
+  localTask.value = ''
 }
 </script>

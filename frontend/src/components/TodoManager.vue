@@ -6,18 +6,23 @@
       </h2>
     </div>
 
+    <Notification
+      v-if="notification.message"
+      :title="notification.title"
+      :message="notification.message"
+      :type="notification.type"
+      :duration="notification.duration"
+    />
+
     <div>
-      <NoTasksPlaceholder v-if="!loading && !error && tasks.length === 0" />
-
       <Loading v-if="loading" />
-      <Error v-if="error" :message="error" />
-
       <TaskList
-        v-if="!loading && !error && tasks.length > 0"
+        v-if="!loading && tasks.length > 0"
         :tasks="tasks"
         @toggleTask="toggleTask"
         @deleteTask="deleteTask"
       />
+      <NoTasksPlaceholder v-if="!loading && tasks.length === 0" />
     </div>
 
     <NewTaskInput v-model="newTask" @addTask="addNewTask" />
@@ -29,24 +34,37 @@ import { ref, onMounted } from 'vue'
 
 import { useTaskStore } from '@/stores/task'
 import Loading from '@/components/Loading.vue'
-import Error from '@/components/Error.vue'
 import TaskList from '@/components/TaskList.vue'
 import NewTaskInput from '@/components/NewTaskInput.vue'
 import NoTasksPlaceholder from '@/components/NoTasksPlaceholder.vue'
+import Notification from '@/components/Notification.vue'
 
 const taskStore = useTaskStore()
 const { tasks, loading, error, fetchTasks, addTask, toggleTask, deleteTask } = taskStore
 
 const newTask = ref('')
+const notification = ref({ message: '', type: '', duration: 5000 })
 
 onMounted(() => {
   fetchTasks()
 })
 
-const addNewTask = () => {
-  if (newTask.value.trim()) {
-    addTask({ title: newTask.value, status: 'pending' })
+const addNewTask = async () => {
+  try {
+    notification.value = {}
+    await addTask({ title: newTask.value, status: 'pending' })
     newTask.value = ''
+    notification.value = {
+      title: 'Success!',
+      message: 'Task added successfully!',
+      type: 'success',
+    }
+  } catch (err) {
+    notification.value = {
+      title: 'Error!',
+      message: err.message || 'Failed to add task',
+      type: 'error',
+    }
   }
 }
 </script>

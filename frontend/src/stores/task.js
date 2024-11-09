@@ -16,6 +16,7 @@ export const useTaskStore = defineStore('taskStore', () => {
       tasks.push(...response.data.data) // Add new items to the reactive array
     } catch (err) {
       error.value = err.message
+      throw new Error(err?.response?.data?.message || err?.message || 'Something went wrong')
     } finally {
       loading.value = false
     }
@@ -28,6 +29,8 @@ export const useTaskStore = defineStore('taskStore', () => {
       tasks.push(response.data.data) // Adds new task to reactive array
     } catch (err) {
       error.value = err.message
+      console.log('err', err)
+      throw new Error(err?.response?.data?.message || err?.message || 'Something went wrong')
     }
   }
 
@@ -42,6 +45,7 @@ export const useTaskStore = defineStore('taskStore', () => {
       }
     } catch (err) {
       error.value = err.message
+      throw new Error(err?.response?.data?.message || err?.message || 'Something went wrong')
     }
   }
 
@@ -55,6 +59,7 @@ export const useTaskStore = defineStore('taskStore', () => {
       }
     } catch (err) {
       error.value = err.message
+      throw new Error(err?.response?.data?.message || err?.message || 'Something went wrong')
     }
   }
 
@@ -68,6 +73,7 @@ export const useTaskStore = defineStore('taskStore', () => {
       }
     } catch (err) {
       error.value = err.message
+      throw new Error(err?.response?.data?.message || err?.message || 'Something went wrong')
     }
   }
 
