@@ -1,5 +1,5 @@
 <template>
-  <div class="max-w-lg w-full bg-white rounded-lg shadow-lg overflow-hidden border-zinc-200">
+  <div class="max-w-lg w-full bg-white rounded-lg shadow-lg overflow-hidden border-zinc-200 m-4">
     <div class="px-6 py-4 bg-gray-200">
       <h2 class="text-2xl font-semibold text-center flex items-center justify-center">
         To-Do List
