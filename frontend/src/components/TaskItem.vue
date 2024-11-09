@@ -5,7 +5,7 @@
         'line-through text-gray-400': task.status === 'completed',
         'text-black': task.status !== 'completed',
       }"
-      class="text-lg flex-1"
+      class="text-md flex-1"
     >
       {{ task.title }}
     </span>
